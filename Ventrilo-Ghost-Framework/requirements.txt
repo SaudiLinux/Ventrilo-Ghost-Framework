@@ -1,5 +1,0 @@
-requests
-aiohttp
-beautifulsoup4
-flask
-colorama
