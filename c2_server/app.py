@@ -12,7 +12,7 @@ def beacon():
     data = request.json
     agent_id = data['id']
     agents[agent_id] = {"ip": request.remote_addr, "os": data['os'], "status": "Online"}
-    return jsonify({"command": "whoami"}) # إرسال أمر افتراضي للعميل
+    return jsonify({"command": "whoami"})
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
